@@ -1,11 +1,18 @@
 {
-  "name": "node-xah",
+  "name": "nodejs-app",
   "version": "1.0.0",
-  "description": "Xray & Hysteria2 Startup Script",
+  "description": "A simplified proxy deployment script with Cloudflare Argo and Xray.",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
-  "author": "vevc",
-  "license": "MIT"
+  "keywords": [
+    "proxy",
+    "cloudflare",
+    "argo",
+    "xray"
+  ],
+  "author": "hsisnoab72937",
+  "license": "ISC",
+  "dependencies": {}
 }

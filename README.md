@@ -1,37 +1,71 @@
-# node-xah (nodejs Xray Argo Hysteria2)
+# nodejs-app
 
-## 🚀 快速部署
+This project provides a streamlined solution for deploying a proxy service using Xray and Cloudflare Argo. It has been refactored to remove the Hysteria protocol and consolidate all configuration and process management into a single `index.js` file.
 
-```bash
-curl -s https://raw.githubusercontent.com/vevc/node-xah/refs/heads/main/install.sh |
-env DOMAIN=example.com PORT=27796 bash
-```
+## Features
 
-## 📋 环境变量列表
+- **Simplified Setup**: No more shell scripts or separate configuration files. Everything is managed within `index.js`.
+- **Dynamic Configuration**: Automatically generates UUIDs, short IDs, and Xray key pairs on startup.
+- **Cloudflare Argo Tunnel**: Integrates with Cloudflare Argo to expose the proxy service to the internet securely.
+- **Automated Binary Management**: Downloads the required Xray and Cloudflared binaries on the first run.
+- **Keep-Alive**: Automatically restarts any of the managed processes if they crash.
 
-| 变量名             | 默认值            | 是否必填 | 说明                                             |
-| ------------------ | ----------------- | -------- | ------------------------------------------------ |
-| **DOMAIN**         | `vevc.github.com` | ✅        | 服务器域名或IP，直连访问的有效域名               |
-| **PORT**           | `10008`           | ✅        | 服务器开放端口，Xray 和 Hysteria2 的主监听端口   |
-| **UUID**           | 随机生成          | ⛔        | 用户身份验证唯一标识符。若未设置，将自动随机生成 |
-| **XRAY_VERSION**   | `25.10.15`        | ⛔        | Xray 核心版本号                                  |
-| **HY2_VERSION**    | `2.6.5`           | ⛔        | Hysteria2 核心版本号                             |
-| **ARGO_VERSION**   | `2025.10.0`       | ⛔        | Cloudflared 版本号                               |
-| **ARGO_DOMAIN**    | 自动获取          | ⛔        | Argo Tunnel 的访问域名，启用固定隧道需要设置     |
-| **ARGO_TOKEN**     | *(空)*            | ⛔        | Argo Tunnel 的访问令牌，启用固定隧道需要设置     |
-| **REMARKS_PREFIX** | `vevc`            | ⛔        | 节点备注的前缀标识                               |
-| **MAIN_FILE**      | `index.js`        | ⛔        | 主启动文件，Node.js 启动入口文件                 |
+## Prerequisites
 
-## ⚙️ 完整命令示例
+- Node.js installed on your system.
+- A domain managed by Cloudflare.
+- (Optional) A Cloudflare Argo Tunnel token (`ARGO_TOKEN`) for a more stable tunnel connection.
 
-```bash
-curl -s https://raw.githubusercontent.com/vevc/node-xah/refs/heads/main/install.sh |
-env DOMAIN=example.com PORT=27796 UUID='' XRAY_VERSION=25.10.15 HY2_VERSION=2.6.5 ARGO_VERSION=2025.10.0 ARGO_DOMAIN='' ARGO_TOKEN='' REMARKS_PREFIX='vevc' MAIN_FILE='index.js' bash
-```
+## Getting Started
 
-## 📢 使用说明与免责声明
+1.  **Clone the repository:**
 
-- 使用本项目时，请在引用、发布或分发时 **注明项目来源**。
-- 本项目仅用于 **技术研究和学习使用**，不得用于任何违法用途。
-- 作者不对因使用本项目导致的任何数据损失、网络封禁、账户封禁或法律责任承担任何责任。
-- 使用本项目即表示您已同意自行承担相关风险与责任。
+    ```bash
+    git clone https://github.com/hsisnoab72937/nodejs-app.git
+    cd nodejs-app
+    ```
+
+2.  **Install dependencies:**
+
+    ```bash
+    npm install
+    ```
+
+3.  **Configure environment variables:**
+
+    You can set the following environment variables to configure the application:
+
+    - `DOMAIN`: Your domain name (e.g., `your.domain.com`).
+    - `PORT`: The port for the Reality protocol.
+    - `UUID`: A unique identifier for your user. If not set, a random one will be generated.
+    - `ARGO_TOKEN`: Your Cloudflare Argo Tunnel token.
+    - `REMARKS_PREFIX`: A prefix for the generated subscription links.
+
+    You can set them in your shell:
+
+    ```bash
+    export DOMAIN="your.domain.com"
+    export PORT="443"
+    # and so on...
+    ```
+
+4.  **Run the application:**
+
+    ```bash
+    npm start
+    ```
+
+Upon starting, the application will download the necessary binaries, generate configurations, and print the subscription links to the console. It will also save them to a `node.txt` file in the `/home/container` directory.
+
+## How It Works
+
+The `index.js` script performs the following actions:
+
+1.  Reads environment variables for configuration.
+2.  Checks for the existence of `cloudflared` (`cf`) and `xray` (`xy`) binaries and downloads them if they are not found.
+3.  Generates an X25519 key pair and a short ID for the Reality protocol.
+4.  Creates an Xray configuration file in memory.
+5.  Starts the `cloudflared` and `xray` processes.
+6.  If not using an `ARGO_TOKEN`, it captures the temporary Argo domain from the `cloudflared` output.
+7.  Generates and displays the VLESS subscription links for both Argo (WebSocket) and Reality.
+8.  Monitors the processes and restarts them if they exit unexpectedly.
