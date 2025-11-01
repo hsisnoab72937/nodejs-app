@@ -1,11 +1,11 @@
 {
-  "name": "node-xah",
+  "name": "nodejs-app",
   "version": "1.0.0",
-  "description": "Xray & Hysteria2 Startup Script",
+  "description": "轻量化的 Xray + Cloudflare Argo 启动脚本，仅需运行 index.js 即可生成节点信息",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
-  "author": "vevc",
+  "author": "hsisnoab72937",
   "license": "MIT"
 }
