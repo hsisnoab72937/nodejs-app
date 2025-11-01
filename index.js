@@ -21,7 +21,7 @@ const XRAY_ARCH = ARCH === "arm64" ? "arm64-v8a" : "64";
 const BASE_DIR = "/home/container";
 const BIN_DIR = path.join(BASE_DIR, "bin");
 
-let ARGO_DOMAIN = "xxx.trycloudflare.com";
+let ARGO_DOMAIN = process.env.ARGO_DOMAIN || "xxx.trycloudflare.com";
 let SHORT_ID = crypto.randomBytes(4).toString("hex");
 let PUBLIC_KEY = "";
 let SUB_INFO = [];
@@ -125,7 +125,7 @@ const printSubInfo = () => {
     `vless://${UUID}@${ARGO_DOMAIN}:443?encryption=none&security=tls&sni=${ARGO_DOMAIN}&fp=chrome&type=ws&path=%2F%3Fed%3D2560#${REMARKS_PREFIX}-ws-argo`,
     `vless://${UUID}@${DOMAIN}:${PORT}?encryption=none&flow=xtls-rprx-vision&security=reality&sni=www.cloudflare.com&fp=chrome&pbk=${PUBLIC_KEY}&sid=${SHORT_ID}&spx=%2F&type=tcp&headerType=none#${REMARKS_PREFIX}-reality`,
   ];
-  const subInfoStr = SUB_INFO.join("\\n");
+  const subInfoStr = SUB_INFO.join("\n");
   console.log(`
 ============================================================
 🚀 WebSocket+Argo & Reality Node Info
@@ -136,9 +136,11 @@ ${subInfoStr}
 };
 
 const runProcess = (app) => {
-  const child = spawn(app.binaryPath, app.args, {
-    stdio: app.mode === "filter" ? ["ignore", "pipe", "pipe"] : app.mode,
-  });
+  const stdioOpts =
+    app.mode === "filter"
+      ? ["ignore", "pipe", "pipe"]
+      : ["ignore", "inherit", "inherit"];
+  const child = spawn(app.binaryPath, app.args, { stdio: stdioOpts });
 
   if (app.mode === "filter") {
     const handleData = (data) => {
